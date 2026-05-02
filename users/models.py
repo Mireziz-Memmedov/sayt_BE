@@ -7,7 +7,7 @@ class NewUsers(models.Model):
     email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
 
     class Meta:
-        db_table = 'Sayt'
+        db_table = 'sayt'
 
     def __str__(self):
         return self.username
