@@ -6,8 +6,8 @@ class NewUsers(models.Model):
     password = models.CharField(max_length=128, null=False)
     email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
 
-    # class Meta:
-    #     db_table = 'sayt'
+    class Meta:
+        db_table = 'sayt'
 
     def __str__(self):
         return self.username
