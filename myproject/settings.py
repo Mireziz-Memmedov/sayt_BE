@@ -57,7 +57,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://mireziz-memmedov.github.io",
-    "https://ubiquitous-fortnight-wrx6rwq9wj7x35qw-5500.app.github.dev/",
+    "https://ubiquitous-fortnight-wrx6rwq9wj7x35qw-5500.app.github.dev",
 ]
 
 ROOT_URLCONF = "myproject.urls"
