@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 
-class NewUsers(models.Model):
+class NewsUsers(models.Model):
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=128, null=False)
     email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
