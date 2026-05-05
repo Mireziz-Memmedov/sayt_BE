@@ -5,6 +5,9 @@ class NewsUsers(models.Model):
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=128, null=False)
     email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
+    verify_code = models.CharField(max_length=6, null=True, blank=True)
+    verify_code_created_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'sayt'
