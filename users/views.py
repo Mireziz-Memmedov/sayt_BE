@@ -18,7 +18,6 @@ def signup(request):
     username = request.data.get('username')
     password = request.data.get('password')
     email = request.data.get('email')
-    print("EMAIL RECEIVED:", repr(email))
     
     NewsUsers.objects.filter(
         is_active = False,
