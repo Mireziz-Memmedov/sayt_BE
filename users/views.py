@@ -18,7 +18,8 @@ def signup(request):
     username = request.data.get('username')
     password = request.data.get('password')
     email = request.data.get('email')
-
+    print("EMAIL RECEIVED:", repr(email))
+    
     NewsUsers.objects.filter(
         is_active = False,
         verify_code_created_at__lt=timezone.now() - timedelta(minutes=5)
