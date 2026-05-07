@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 import secrets
 import string
+import os
 
 @api_view(["POST"])
 def signup(request):
