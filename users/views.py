@@ -72,13 +72,13 @@ def signup(request):
     try:
         print("BEFORE EMAIL")
 
-        send_mail(
-            subject='Email Verification Code',
-            message=f'Your verification code is: {verify_code}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        # send_mail(
+        #     subject='Email Verification Code',
+        #     message=f'Your verification code is: {verify_code}',
+        #     from_email=settings.EMAIL_HOST_USER,
+        #     recipient_list=[email],
+        #     fail_silently=False,
+        # )
 
         print("AFTER EMAIL")
 
