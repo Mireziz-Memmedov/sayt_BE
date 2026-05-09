@@ -70,6 +70,8 @@ def signup(request):
     user.save()
 
     try:
+        print("BEFORE EMAIL")
+
         send_mail(
             subject='Email Verification Code',
             message=f'Your verification code is: {verify_code}',
@@ -77,6 +79,8 @@ def signup(request):
             recipient_list=[email],
             fail_silently=False,
         )
+
+        print("AFTER EMAIL")
 
         return Response({
             'success': True, 
