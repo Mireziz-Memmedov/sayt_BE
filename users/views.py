@@ -69,18 +69,28 @@ def signup(request):
     user.set_password(password)
     user.save()
 
-    send_mail(
-        subject = 'Email Verification Code',
-        message=f'Your verification code is: {verify_code}',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email],
-        fail_silently=False,
-    )
+    try:
 
-    return Response(
-        {'success': True, 'message': 'Verification code sent successfully'}, 
-        status=status.HTTP_201_CREATED
-    )
+        send_mail(
+            subject = 'Email Verification Code',
+            message=f'Your verification code is: {verify_code}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return Response({
+            'success': True, 
+            'message': 'Verification code sent successfully'
+        })
+
+    except Exception as e:
+        print("EMAIL ERROR:", str(e))
+        
+        return Response({
+            "success": False,
+            "error": str(e)
+        }, status=500)    
 
 def generate_verify_code(length):
     characters = string.digits
