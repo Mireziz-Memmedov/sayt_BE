@@ -12,6 +12,7 @@ from django.conf import settings
 import secrets
 import string
 import os
+import threading
 
 @api_view(["POST"])
 def signup(request):
@@ -69,28 +70,24 @@ def signup(request):
     user.set_password(password)
     user.save()
 
-    try:
+    def send_email():
+        try:
+            send_mail(
+                subject='Email Verification Code',
+                message=f'Your verification code is: {verify_code}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            print("EMAIL ERROR:", e)
 
-        send_mail(
-            subject = 'Email Verification Code',
-            message=f'Your verification code is: {verify_code}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+    threading.Thread(target=send_email).start()
 
-        return Response({
-            'success': True, 
-            'message': 'Verification code sent successfully'
-        })
-
-    except Exception as e:
-        print("EMAIL ERROR:", str(e))
-        
-        return Response({
-            "success": False,
-            "error": str(e)
-        }, status=500)    
+    return Response(
+        {'success': True, 'message': 'Verification code sent successfully'}, 
+        status=status.HTTP_201_CREATED
+    )
 
 def generate_verify_code(length):
     characters = string.digits
