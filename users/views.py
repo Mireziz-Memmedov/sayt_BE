@@ -70,17 +70,13 @@ def signup(request):
     user.save()
 
     try:
-        print("BEFORE EMAIL")
-
-        # send_mail(
-        #     subject='Email Verification Code',
-        #     message=f'Your verification code is: {verify_code}',
-        #     from_email=settings.EMAIL_HOST_USER,
-        #     recipient_list=[email],
-        #     fail_silently=False,
-        # )
-
-        print("AFTER EMAIL")
+        send_mail(
+            subject = 'Email Verification Code',
+            message=f'Your verification code is: {verify_code}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
 
         return Response({
             'success': True, 
