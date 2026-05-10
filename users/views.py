@@ -7,11 +7,12 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from datetime import timedelta
 from django.utils import timezone
-from django.core.mail import send_mail
 from django.conf import settings
 import secrets
 import string
-import os
+import resend
+
+resend.api_key = settings.RESEND_API_KEY
 
 @api_view(["POST"])
 def signup(request):
@@ -70,26 +71,23 @@ def signup(request):
     user.save()
 
     try:
-        send_mail(
-            subject = 'Email Verification Code',
-            message=f'Your verification code is: {verify_code}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-
-        return Response({
-            'success': True, 
-            'message': 'Verification code sent successfully'
+        resend.Emails.send({
+            "from": "onboarding@resend.dev",
+            "to": [email],
+            "subject": "Verification Code",
+            "html": f"<p>Your code: {verify_code}</p>"
         })
-
-    except Exception as e:
-        print("EMAIL ERROR:", str(e))
-        
-        return Response({
-            "success": False,
-            "error": str(e)
-        }, status=500)    
+    except Exception:
+        user.delete()
+        return Response(
+            {"success": False, "error": "Email could not be sent"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
+    return Response(
+        {"success": True, "message": "Verification code sent successfully"},
+        status=status.HTTP_200_OK
+    )
 
 def generate_verify_code(length):
     characters = string.digits
