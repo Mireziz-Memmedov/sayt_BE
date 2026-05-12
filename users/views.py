@@ -11,8 +11,23 @@ from django.conf import settings
 import secrets
 import string
 import resend
+import threading
 
 resend.api_key = settings.RESEND_API_KEY
+
+def send_email_function(email, verify_code):
+    resend.Emails.send({
+        "from": "onboarding@resend.dev",
+        "to": [email],
+        "subject": "Verification Code",
+        "html": f"<p>Your code: {verify_code}</p>"
+    })
+
+def send_email_async(email, verify_code):
+    threading.Thread(
+        target=send_email_function,
+        args=(email, verify_code)
+    ).start()
 
 @api_view(["POST"])
 def signup(request):
@@ -70,19 +85,21 @@ def signup(request):
     user.set_password(password)
     user.save()
 
-    try:
-        resend.Emails.send({
-            "from": "onboarding@resend.dev",
-            "to": [email],
-            "subject": "Verification Code",
-            "html": f"<p>Your code: {verify_code}</p>"
-        })
-    except Exception:
-        user.delete()
-        return Response(
-            {"success": False, "error": "Email could not be sent"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    send_email_async(email, verify_code)
+    
+    # try:
+    #     resend.Emails.send({
+    #         "from": "onboarding@resend.dev",
+    #         "to": [email],
+    #         "subject": "Verification Code",
+    #         "html": f"<p>Your code: {verify_code}</p>"
+    #     })
+    # except Exception:
+    #     user.delete()
+    #     return Response(
+    #         {"success": False, "error": "Email could not be sent"},
+    #         status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     )
     
     return Response(
         {"success": True, "message": "Verification code sent successfully"},
