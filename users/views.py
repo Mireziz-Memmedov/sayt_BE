@@ -86,21 +86,7 @@ def signup(request):
     user.save()
 
     send_email_async(email, verify_code)
-    
-    # try:
-    #     resend.Emails.send({
-    #         "from": "onboarding@resend.dev",
-    #         "to": [email],
-    #         "subject": "Verification Code",
-    #         "html": f"<p>Your code: {verify_code}</p>"
-    #     })
-    # except Exception:
-    #     user.delete()
-    #     return Response(
-    #         {"success": False, "error": "Email could not be sent"},
-    #         status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #     )
-    
+        
     return Response(
         {"success": True, "message": "Verification code sent successfully"},
         status=status.HTTP_200_OK
