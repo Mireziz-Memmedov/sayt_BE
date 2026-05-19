@@ -97,3 +97,36 @@ def generate_verify_code(length):
     password = ''.join(secrets.choice(characters) for i in range(length))
 
     return password
+
+@api_view(['POST'])
+def verify(request):
+    verify_code = request.data.get('code')
+
+    if not verify_code:
+        return Response(
+            {'success': False, 'error': 'Please enter the verification code.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user_instance = NewsUsers.objects.filter(verify_code=verify_code).first()
+
+    if not user_instance:
+        return Response(
+            {'success': False, 'error': 'Invalid verification code.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if timezone.now() - user_instance.verify_code_created_at > timedelta(minutes=5):
+        return Response(
+            {'success': False, 'error': 'Your verification code has expired. Please request a new one.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user_instance.is_active = True
+    user_instance.verify_code = None
+    user_instance.save()
+
+    return Response(
+        {'success': True, 'message': 'Verification successful.'},
+        status=status.HTTP_200_OK
+    )
