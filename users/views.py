@@ -130,3 +130,4 @@ def verify(request):
         {'success': True, 'message': 'Verification successful.'},
         status=status.HTTP_200_OK
     )
+    
