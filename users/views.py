@@ -12,6 +12,7 @@ import secrets
 import string
 import resend
 import threading
+from django.db.models import Q
 
 resend.api_key = settings.RESEND_API_KEY
 
@@ -131,3 +132,40 @@ def verify(request):
         status=status.HTTP_200_OK
     )
     
+@api_view(['POST'])
+def login(request):
+    username_or_email = request.data.get('username_or_email')
+    password = request.data.get('password')
+
+    if not username_or_email or not password:
+        return Response(
+            {'success': False, 'error': 'All fields must be filled in!'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        ) 
+    
+    user = NewsUsers.objects.filter(
+        Q(username=username_or_email) | Q(email=username_or_email)
+    ).first()
+
+    if not user:
+        return Response(
+            {'success': False, 'error': 'Invalid username/email or password.'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if not user.is_active:
+        return Response(
+            {'success': False, 'error': 'Please verify your account before logging in.'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        ) 
+        
+    if not user.check_password(password):
+       return Response(
+            {'success': False, 'error': 'Invalid username/email or password.'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        ) 
+    
+    return Response(
+        {'success': True, 'message': 'Login successful.'},
+        status=status.HTTP_200_OK
+    )
