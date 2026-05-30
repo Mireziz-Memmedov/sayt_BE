@@ -166,6 +166,11 @@ def login(request):
         ) 
     
     return Response(
-        {'success': True, 'message': 'Login successful.'},
+        {
+            'success': True,
+            'message': 'Login successful.',
+            'username': user.username,
+            'email': user.email,
+        },
         status=status.HTTP_200_OK
     )
