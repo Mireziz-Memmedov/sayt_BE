@@ -1,5 +1,5 @@
-from .models import NewsUsers
-from .serializers import NewsUsersSerializer
+from .models import Listing, ListingImage, NewsUsers
+from .serializers import NewsUsersSerializer, ListingSerializer, ListingImageSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.validators import validate_email
@@ -174,3 +174,20 @@ def login(request):
         },
         status=status.HTTP_200_OK
     )
+
+@api_view(['POST'])
+def add_listing(request):
+    make = request.data.get('make')
+    model = request.data.get('model')
+    year = request.data.get('year')
+    body_type = request.data.get('body_type')
+    fuel = request.data.get('fuel')
+    transmission = request.data.get('transmission')
+    engine = request.data.get('engine')
+    mileage = request.data.get('mileage')
+    color = request.data.get('color')
+    price = request.data.get('price')
+    description = request.data.get('description')
+    images = request.FILES.getlist('images')
+
+
