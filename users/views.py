@@ -199,6 +199,12 @@ def add_listing(request):
     description = request.data.get('description')
     images = request.FILES.getlist('images')
 
+    if not make or not model:
+        return Response({"success": False, "error": "Missing fields"})
+
+    if not images:
+        return Response({"error": "No images uploaded"})
+
     listing = Listing.objects.create(
         user=user,
         make=make,
