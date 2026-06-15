@@ -1,6 +1,7 @@
 from .models import Listing, ListingImage, NewsUsers
 from .serializers import NewsUsersSerializer, ListingSerializer, ListingImageSerializer
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -13,6 +14,7 @@ import string
 import resend
 import threading
 from django.db.models import Q
+from rest_framework_simplejwt.tokens import RefreshToken
 
 resend.api_key = settings.RESEND_API_KEY
 
@@ -164,11 +166,15 @@ def login(request):
             {'success': False, 'error': 'Invalid username/email or password.'}, 
             status=status.HTTP_400_BAD_REQUEST
         ) 
+
+    refresh = RefreshToken.for_user(user)
     
     return Response(
         {
             'success': True,
             'message': 'Login successful.',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'username': user.username,
             'email': user.email,
         },
@@ -176,7 +182,10 @@ def login(request):
     )
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_listing(request):
+    user = request.user
+    
     make = request.data.get('make')
     model = request.data.get('model')
     year = request.data.get('year')
@@ -189,5 +198,32 @@ def add_listing(request):
     price = request.data.get('price')
     description = request.data.get('description')
     images = request.FILES.getlist('images')
+
+    listing = Listing.objects.create(
+        user=user,
+        make=make,
+        model=model,
+        year=year,
+        body_type=body_type,
+        fuel=fuel,
+        transmission=transmission,
+        engine=engine,
+        mileage=mileage,
+        color=color,
+        price=price,
+        description=description
+    )
+
+    for img in images:
+        ListingImage.objects.create(
+            listing=listing,
+            image=img
+        )
+
+    return Response({
+        "success": True,
+        "message": "Listing created successfully"
+    }, status=status.HTTP_201_CREATED)
+
 
 
