@@ -15,6 +15,7 @@ import resend
 import threading
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 
 resend.api_key = settings.RESEND_API_KEY
 
@@ -33,6 +34,7 @@ def send_email_async(email, verify_code):
     ).start()
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def signup(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -102,6 +104,7 @@ def generate_verify_code(length):
     return password
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def verify(request):
     verify_code = request.data.get('code')
 
@@ -135,6 +138,7 @@ def verify(request):
     )
     
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     username_or_email = request.data.get('username_or_email')
     password = request.data.get('password')
@@ -182,7 +186,6 @@ def login(request):
     )
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def add_listing(request):
     user = request.user
     
