@@ -203,26 +203,60 @@ def add_listing(request):
     description = request.data.get('description')
     images = request.FILES.getlist('images')
 
-    if not make or not model:
-        return Response({"success": False, "error": "Missing fields"})
+    if not all([
+        make,
+        model,
+        year,
+        body_type,
+        fuel,
+        transmission,
+        engine,
+        mileage,
+        color,
+        price,
+        description
+    ]):
+        return Response(
+            {
+                "success": False,
+                "error": "All fields must be filled!"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     if not images:
-        return Response({"error": "No images uploaded"})
+        return Response(
+            {
+                "success": False,
+                "error": "No images uploaded"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    listing = Listing.objects.create(
-        user=user,
-        make=make,
-        model=model,
-        year=year,
-        body_type=body_type,
-        fuel=fuel,
-        transmission=transmission,
-        engine=engine,
-        mileage=mileage,
-        color=color,
-        price=price,
-        description=description
-    )
+    try:
+        listing = Listing.objects.create(
+            user=user,
+            make=make,
+            model=model,
+            year=year,
+            body_type=body_type,
+            fuel=fuel,
+            transmission=transmission,
+            engine=engine,
+            mileage=mileage,
+            color=color,
+            price=price,
+            description=description
+        )
+
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "error": str(e)
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     for img in images:
         ListingImage.objects.create(
