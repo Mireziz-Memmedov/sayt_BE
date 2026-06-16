@@ -170,8 +170,16 @@ def login(request):
             {'success': False, 'error': 'Invalid username/email or password.'}, 
             status=status.HTTP_400_BAD_REQUEST
         ) 
-
+    
+    print(user)
+    print(user.id)
+    print(user.username)
+    print(user.email)
+    
+    print("BEFORE TOKEN")
     refresh = RefreshToken.for_user(user)
+    print("AFTER TOKEN")
+
     
     return Response(
         {
