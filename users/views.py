@@ -186,6 +186,7 @@ def login(request):
     )
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_listing(request):
     user = request.user
     
