@@ -253,7 +253,7 @@ def add_listing(request):
         return Response(
             {
                 "success": False,
-                "error": str(e)
+                "error": "Something went wrong"
             },
             status=status.HTTP_400_BAD_REQUEST
         )
