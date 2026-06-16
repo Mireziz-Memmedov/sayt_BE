@@ -177,7 +177,18 @@ def login(request):
     print(user.email)
     
     print("BEFORE TOKEN")
-    refresh = RefreshToken.for_user(user)
+
+    try:
+        refresh = RefreshToken.for_user(user)
+    except Exception as e:
+        print("JWT ERROR:", e)
+        return Response(
+            {
+                "jwt_error": str(e)
+            },
+            status=500
+        )
+
     print("AFTER TOKEN")
 
     
