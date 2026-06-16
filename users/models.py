@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from cloudinary.models import CloudinaryField
+from django.contrib.auth.models import AbstractUser
 
-class NewsUsers(models.Model):
-    username = models.CharField(max_length=100, unique=True)
-    password = models.CharField(max_length=128, null=False)
+class NewsUsers(AbstractUser):
+    # username = models.CharField(max_length=100, unique=True)
+    # password = models.CharField(max_length=128, null=False)
     email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
     verify_code = models.CharField(max_length=6, null=True, blank=True)
     verify_code_created_at = models.DateTimeField(null=True, blank=True)
-    is_active = models.BooleanField(default=False)
+    # is_active = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'sayt'
@@ -16,11 +17,11 @@ class NewsUsers(models.Model):
     def __str__(self):
         return self.username
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+    # def set_password(self, raw_password):
+    #     self.password = make_password(raw_password)
 
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
+    # def check_password(self, raw_password):
+    #     return check_password(raw_password, self.password)
 
 class Listing(models.Model):
     user = models.ForeignKey(NewsUsers, on_delete=models.CASCADE, related_name='listings')

@@ -19,6 +19,17 @@ class NewsUsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsUsers
         fields = ['id', 'username', 'password', 'email']
+    
+    def create(self, validated_data):
+        user = NewsUsers(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
 
 
 

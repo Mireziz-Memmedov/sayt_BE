@@ -171,9 +171,6 @@ def login(request):
             status=status.HTTP_400_BAD_REQUEST
         ) 
 
-    print("USER:", user)
-    print("USER ID:", user.id)
-
     refresh = RefreshToken.for_user(user)
     
     return Response(
