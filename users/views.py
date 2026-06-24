@@ -235,5 +235,14 @@ def add_listing(request):
         "message": "Listing created successfully"
     }, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def listing_detail(request, id):
+    listing = Listing.objects.get(id=id)
+    serializer = ListingSerializer(listing)
+
+    return Response(serializer.data)
+
+
 
 
