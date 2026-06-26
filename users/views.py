@@ -238,7 +238,18 @@ def add_listing(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def listing_detail(request, id):
-    listing = Listing.objects.get(id=id)
+    
+    try:
+        listing = Listing.objects.get(id=id)
+
+    except Listing.DoesNotExist:
+        return Response(
+            {
+                "success": False,
+                "error": "Listing not found"
+            },
+            status=status.HTTP_404_NOT_FOUND
+        )
     serializer = ListingSerializer(listing)
 
     return Response(serializer.data)
