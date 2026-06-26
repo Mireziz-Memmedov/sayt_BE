@@ -237,6 +237,15 @@ def add_listing(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def listing(request):
+    
+    listings = Listing.objects.all().order_by('-id')
+    serializer = ListingSerializer(listings, many=True)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def listing_detail(request, id):
     
     try:
