@@ -2,9 +2,17 @@ from rest_framework import serializers
 from .models import Listing, ListingImage, NewsUsers
 
 class ListingImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
     class Meta:
         model = ListingImage
         fields = ['id', 'image']
+    
+    def get_image(self, obj):
+        # CloudinaryField'dən tam URL'ni al
+        if obj.image:
+            return obj.image.url
+        return None
 
 class ListingSerializer(serializers.ModelSerializer):
     images = ListingImageSerializer(many=True, read_only=True)
