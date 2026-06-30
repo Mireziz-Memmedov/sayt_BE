@@ -29,10 +29,10 @@ class ListingSerializer(serializers.ModelSerializer):
         listing_date = listing.time.date()
 
         if listing_date == today:
-            return "Today"
+            return "Today" + "" + listing.time.strftime("%H:%M")
 
         elif listing_date == today - timedelta(days=1):
-            return "Yesterday"
+            return "Yesterday" + "" + listing.time.strftime("%H:%M")
 
         else:
             return listing.time.strftime("%d.%m.%Y, %H:%M")        
