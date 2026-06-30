@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Listing, ListingImage, NewsUsers
+from datetime import timedelta
+from django.utils import timezone
 
 class ListingImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
@@ -16,10 +18,24 @@ class ListingImageSerializer(serializers.ModelSerializer):
 
 class ListingSerializer(serializers.ModelSerializer):
     images = ListingImageSerializer(many=True, read_only=True)
+    time = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
-        fields = ['id', 'user', 'make', 'model', 'year', 'body_type', 'fuel', 'transmission', 'engine', 'mileage', 'color', 'price', 'description', 'images']
+        fields = ['id', 'user', 'make', 'model', 'year', 'body_type', 'fuel', 'transmission', 'engine', 'mileage', 'color', 'price', 'description', 'images', 'time']
+
+    def get_time(self, listing):
+        today = timezone.now().date()
+        listing_date = listing.time.date()
+
+        if listing_date == today:
+            return "Today"
+
+        elif listing_date == today - timedelta(days=1):
+            return "Yesterday"
+
+        else:
+            return listing.time.strftime("%d.%m.%Y, %H:%M")        
 
 class NewsUsersSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
